@@ -4,32 +4,38 @@
 #include "Graph.h"
 #include "Numbers.h"
 #include <list>
+#include <memory>
 
-class ListGraph: public Graph
-{
-	public:
-		ListGraph(int size);
-		virtual ~ListGraph();
-		void connectVertices(int start, int end, int distance);
-		int getVerticesDistance(int start, int end);
-		Results* runBellmanFord(int startNode, int endNode);
-	protected:
+using namespace std;
 
-	private:
-		struct Arc;
-		struct Vertex{
-			std::list<Arc*> arcs;
-			int number;
-		};
-		struct Arc{
-			Vertex* nextVertex;
-			int distance;
-			Arc();
-			Arc(Vertex* nextVertex, int distance): nextVertex(nextVertex), distance(distance){}
-		};
-		void initVertices();
-		int size;
-		Vertex * vertices;
+class ListGraph: public Graph {
+public:
+    ListGraph(int size);
+    virtual ~ListGraph();
+    void connectVertices(int start, int end, int distance);
+    int getVerticesDistance(int start, int end);
+    Results* runBellmanFord(int startNode, int endNode);
+    int runFordFulkerson(int start, int end);
+protected:
+
+private:
+
+    struct Arc {
+        int start;
+        int end;
+        int distance;
+        Arc();
+        Arc(int start, int end, int distance): start(start), end(end), distance(distance) {}
+    };
+    list<Arc*> arcs;
+    list<Arc*> residualArcs;
+    int size;
+    Arc* findResidualArc(int start, int end);
+    int getCapacity(int start, int end);
+    int getCapacityOrCreate(int start, int end);
+    void setCapacity(int start, int end, int capacity);
+    list<int> getAdjacent(int start);
+    unique_ptr<list<int>> dfs(int start, int end);
 };
 
 #endif // LISTGRAPH_H
